@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Snake Xenia</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            #myCanvas{
+                
+                
+                display: block;
+                margin: 0 auto;
+                margin-top: 50px
+            }
+            #myScoreCanvas{
+                background: red;
+                display: block;
+                margin: 0 auto;
+            }
+            body{
+                background-image: url(snake2.jpg)
+            }
+            #score ,#level{
+                text-align: center;
+                font-size: 100px;
+                font-family: 'Antic Slab', serif;
+                color: white
+            }
+            #gameStatus {
+                text-align: center;
+                font-size: 50px;
+                font-family: 'Antic Slab', serif;
+                color: red
+            }
+        </style>
+    </head>
+    <body>
+        <div id="score">Score : 00</div>
+        <div id="level">Level : 1</div>
+        <div id="gameStatus"> </div>
+        <canvas id="myCanvas" width="500" height="500"></canvas>
+        <script>
+            var canvas = document.getElementById("myCanvas");
+            var ctx = canvas.getContext("2d");
+            //these variables are for the increase and decrese of the respective position of the snake
+            var dx = 10;
+            var dy = 0;
+            var score = 0;
+            var level = 1;
+            var levelSpeed = 100;
+// Food x-coordinate
+            let foodX;
+            // Food y-coordinate
+            let foodY;
+            //this variable is used for making some code running again and again after some delay
+            var interval = null;
+            var currentKey = 39;//this is to keep the record of the arrow key pressed
+            var snake = [
+                {x: 150, y: 150},
+                {x: 140, y: 150},
+                {x: 130, y: 150},
+                {x: 120, y: 150},
+                {x: 110, y: 150}
+            ]
+            function drawSnake(snakePart) {
+                ctx.beginPath();
+                ctx.fillStyle = "#E08D90";
+//                ctx.strokestyle = "#32CD32";
+                ctx.rect(snakePart.x, snakePart.y, 10, 10);
+                ctx.strokeRect(snakePart.x, snakePart.y, 10, 10);
+                ctx.fill();
+                ctx.closePath();
+            }
+            function drawCellForEachSnake() {
+                snake.forEach(drawSnake)
+            }
+            function moveSnake() {
+                var head = {x: snake[0].x + dx, y: snake[0].y + dy};
+                snake.unshift(head);//add item in front of array
+                var didEatFood = snake[0].x === foodX && snake[0].y === foodY;
+                if (didEatFood) {
+                    // Increase score
+                    score += 10;
+                    // Display score on screen
+                    document.getElementById('score').innerHTML = "Score : " + score;
+                    level = Math.floor(score / 50);
+                    level += 1;
+                    switch (level) {
+                        case 2 :
+                            levelSpeed = 90;
+                            console.log("game speed " + levelSpeed);
+                            clearInterval(interval);
+                            interval = setInterval(gemeEntryPoint, levelSpeed)
+                            break;
+                        case 3 :
+                            levelSpeed = 80;
+                            console.log("game speed " + levelSpeed);
+                            clearInterval(interval);
+                            interval = setInterval(gemeEntryPoint, levelSpeed)
+                            break;
+                        case 4 :
+                            levelSpeed = 70;
+                            console.log("game speed " + levelSpeed);
+                            clearInterval(interval);
+                            interval = setInterval(gemeEntryPoint, levelSpeed)
+                            break;
+                        case 5 :
+                            levelSpeed = 60;
+                            console.log("game speed " + levelSpeed);
+                            clearInterval(interval);
+                            interval = setInterval(gemeEntryPoint, levelSpeed)
+                            break;
+                        case 6 :
+                            levelSpeed = 50;
+                            console.log("game speed " + levelSpeed);
+                            clearInterval(interval);
+                            interval = setInterval(gemeEntryPoint, levelSpeed)
+                            break;
+                        case 7 :
+                            levelSpeed = 40;
+                            console.log("game speed " + levelSpeed);
+                            clearInterval(interval);
+                            interval = setInterval(gemeEntryPoint, levelSpeed)
+                            break;
+                        case 8 :
+                            levelSpeed = 30;
+                            console.log("game speed " + levelSpeed);
+                            clearInterval(interval);
+                            interval = setInterval(gemeEntryPoint, levelSpeed)
+                            break;
+                        case 9 :
+                            levelSpeed = 20;
+                            console.log("game speed " + levelSpeed);
+                            clearInterval(interval);
+                            interval = setInterval(gemeEntryPoint, levelSpeed)
+                            break;
+                        case 10 :
+                            levelSpeed = 10;
+                            console.log("game speed " + levelSpeed);
+                            clearInterval(interval);
+                            interval = setInterval(gemeEntryPoint, levelSpeed)
+                            break;
+                    }
+//                    if(levelsp)
+                    document.getElementById('level').innerHTML = "Level : " + level;
+                    // Generate new food location
+                    createFood();
+                } else {
+                    // Remove the last part of snake body
+                    snake.pop();
+                }
+//                snake.pop();//remove the last element
+                if (snake[0].x === 0 || snake[0].x === 490 || snake[0].y === 0 || snake[0].y === 490) {
+                    console.log("SNAKE STRUCT");
+//                    document.location.reload();
+//                    ctx.font = "30px Arial";
+//                    ctx.fillText("GAME OVER", 150, 250);
+                    clearInterval(interval);
+                    document.getElementById('gameStatus').innerHTML = "GAME OVER";
+                }
+            }
+            function gemeEntryPoint() {
+                if (didGameEnd())
+                    return;
+                if (true) {
+                    clearCanvas();
+                    drawFood();
+                    moveSnake();
+                    drawCellForEachSnake();
+                }
+//                clearInterval(interval);
+            }
+            function clearCanvas() {
+                ctx.fillStyle = "#BDE25A";//this is gray background color
+//                ctx.strokestyle = "#32CD32";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            }
+            /**
+             * Draw the food on the canvas
+             */
+            function drawFood() {
+                ctx.fillStyle = "#4F4848";// this is yellow color food
+//                ctx.strokestyle = "#8B4513"
+                ctx.fillRect(foodX, foodY, 10, 10);
+                ctx.strokeRect(foodX, foodY, 10, 10);
+            }
+            function randomTen(min, max) {
+//                var xx = Math.round((Math.random() * (max - min) + min) / 10) * 10;
+//                console.log("const " + xx);
+//                 rr = new Random();
+                return Math.round((Math.random() * (max - min) + min) / 10) * 10;
+            }
+            /**
+             * Creates random set of coordinates for the snake food.
+             */
+            function createFood() {
+                // Generate a random number the food x-coordinate
+                foodX = randomTen(10, canvas.width - 20);
+                // Generate a random number for the food y-coordinate
+                foodY = randomTen(10, canvas.height - 20);
+                // if the new food location is where the snake currently is, generate a new food location
+                snake.forEach(function isFoodOnSnake(part) {
+                    const foodIsoNsnake = part.x == foodX && part.y == foodY;
+                    if (foodIsoNsnake)
+                        createFood();
+                });
+            }
+            function didGameEnd() {
+                for (let i = 4; i < snake.length; i++) {
+                    if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
+                        console.log("SNAKE STRUCT");
+                        document.getElementById('gameStatus').innerHTML = "GAME OVER";
+                        clearInterval(interval);
+                        return true
+                    }
+                }
+                const hitLeftWall = snake[0].x < 0;
+                const hitRightWall = snake[0].x > canvas.width - 10;
+                const hitToptWall = snake[0].y < 0;
+                const hitBottomWall = snake[0].y > canvas.height - 10;
+                return hitLeftWall || hitRightWall || hitToptWall || hitBottomWall
+            }
+            setKeyboardControls();
+            function setKeyboardControls() {
+                console.log("hello");
+                document.addEventListener('keydown', (e) => {
+                    // left arrow key
+                    if (e.which === 37 && !(currentKey === 37 || currentKey === 39)) {
+                        dx = -10;
+                        dy = 0;
+                    }
+                    // up arrow key
+                    else if (e.which === 38 && !(currentKey === 38 || currentKey === 40)) {
+                        console.log("hello up");
+                        dx = 0;
+                        dy = -10;
+                    }
+                    // right arrow key
+                    else if (e.which === 39 && !(currentKey === 37 || currentKey === 39)) {
+                        console.log("hello right");
+                        dx = +10;
+                        dy = 0;
+                    }
+                    // down arrow key
+                    else if (e.which === 40 && !(currentKey === 38 || currentKey === 40)) {
+                        console.log("hello down");
+                        dx = 0;
+                        dy = 10;
+                    }
+                    currentKey = e.which;
+//                    console.log("*** "+e.which);
+                });
+            }
+            createFood()
+            interval = setInterval(gemeEntryPoint, levelSpeed)
+        </script>
+    </body>
+</html>
